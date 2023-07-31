@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { fetchedImages, backCardUrl } from "./data/data";
 import "./App.css";
-// current issue : if clicked a bad match : the image dont reset to backcard
-// add Timeout
+
 function MemoryGame() {
   return (
     <>
@@ -19,8 +18,14 @@ export default MemoryGame;
 function Board({ fetchedImages }) {
   const [images, setImages] = useState(shuffledImages(fetchedImages));
   const [firstClickedCardIndex, setfirstClickedCardIndex] = useState(null);
+  const [isTwoCardsRevealed, setIsTwoCardsRevealed] = useState(false);
+
   const handleCardClick = (index) => {
-    console.log(images);
+    if (isTwoCardsRevealed) {
+      // Two cards are already revealed, don't process any further clicks
+      return;
+    }
+
     const updatedImages = images.map((image, id) => {
       return id === index ? { ...image, isRevealed: true } : image;
     });
@@ -34,19 +39,16 @@ function Board({ fetchedImages }) {
       let pairId1 = images[firstClickedCardIndex].id;
       let pairId2 = images[index].id;
 
-      console.log(pairId1);
-      console.log(pairId2);
-      console.log("1 image clicked");
-
       if (images[firstClickedCardIndex].id === images[index].id) {
         // keep visible => isRevealed: true
         setfirstClickedCardIndex(null);
-        console.log("pair");
+        setIsTwoCardsRevealed(false); // Reset the flag
       } else {
         // hide => isRevealed: false for both cards firstClickedCardIndex and index
 
+        setIsTwoCardsRevealed(true); // Set the flag to disable further clicks
+
         setTimeout(() => {
-          console.log("hi");
           setfirstClickedCardIndex(null);
           const updatedImages = images.map((image, id) => {
             return id === firstClickedCardIndex || id === index
@@ -55,6 +57,7 @@ function Board({ fetchedImages }) {
           });
 
           setImages(updatedImages);
+          setIsTwoCardsRevealed(false); // Reset the flag after hiding the unmatched cards
         }, 500);
       }
     }
@@ -105,5 +108,6 @@ function shuffle(array) {
 }
 
 /* TODO :
- * - Fast click : disable click on other cards
+   - Add score 
+   - Add restart
  * - Turn card animation */
