@@ -1,29 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchedImages, backCardUrl } from "./data/data";
 import "./App.css";
 
 function MemoryGame() {
   const [score, setScore] = useState(0);
+  const [reset, setReset] = useState(false);
   const handleScore = () => {
     setScore(score + 1);
-    console.log("score");
+  };
+  const handleReset = () => {
+    setReset(!reset);
+    setScore(0);
   };
   return (
     <>
       <h1>Synaptic Shuffle</h1>
-      <button>Restart</button>
+      <button onClick={handleReset}>Restart</button>
       <p>Pairs found: {score}</p>
-      <Board fetchedImages={fetchedImages} handleScore={handleScore} />
+      <Board
+        fetchedImages={fetchedImages}
+        handleScore={handleScore}
+        reset={reset}
+        handleReset={handleReset}
+      />
     </>
   );
 }
-
 export default MemoryGame;
 
-function Board({ fetchedImages, handleScore }) {
+function Board({ fetchedImages, handleScore, reset, handleReset }) {
   const [images, setImages] = useState(shuffledImages(fetchedImages));
   const [firstClickedCardIndex, setfirstClickedCardIndex] = useState(null);
   const [isTwoCardsRevealed, setIsTwoCardsRevealed] = useState(false);
+
+  useEffect(() => {
+    console.log("board rerendered");
+    if (reset) {
+      resetBoard();
+      handleReset(false);
+    }
+  });
+
+  const resetBoard = () => {
+    setImages(shuffledImages(fetchedImages));
+    setfirstClickedCardIndex(null);
+    setIsTwoCardsRevealed(false);
+    handleScore(0); // Reset the score to zero in the `MemoryGame` component
+  };
 
   const handleCardClick = (index) => {
     if (isTwoCardsRevealed) {
@@ -33,7 +56,6 @@ function Board({ fetchedImages, handleScore }) {
     // if the clicked image has already been revealed
     if (images[index].isRevealed === true) {
       // The card is already revealed, get another valid click
-      console.log("has been revealed");
       return;
     }
 
@@ -50,14 +72,13 @@ function Board({ fetchedImages, handleScore }) {
       let pairId1 = images[firstClickedCardIndex].id;
       let pairId2 = images[index].id;
 
-      if (images[firstClickedCardIndex].id === images[index].id) {
+      if (pairId1 === pairId2) {
         // keep visible => isRevealed: true
         setfirstClickedCardIndex(null);
         setIsTwoCardsRevealed(false);
         handleScore();
       } else {
         // hide => isRevealed: false for both cards firstClickedCardIndex and index
-
         setIsTwoCardsRevealed(true); // Set the flag to disable further clicks
 
         setTimeout(() => {
@@ -120,6 +141,4 @@ function shuffle(array) {
 }
 
 /* TODO :
-   - Add score 
-   - Add restart
  * - Turn card animation */
