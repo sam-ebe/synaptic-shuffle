@@ -3,19 +3,24 @@ import { fetchedImages, backCardUrl } from "./data/data";
 import "./App.css";
 
 function MemoryGame() {
+  const [score, setScore] = useState(0);
+  const handleScore = () => {
+    setScore(score + 1);
+    console.log("score");
+  };
   return (
     <>
       <h1>Synaptic Shuffle</h1>
       <button>Restart</button>
-      <p>Score</p>
-      <Board fetchedImages={fetchedImages} />
+      <p>Pairs found: {score}</p>
+      <Board fetchedImages={fetchedImages} handleScore={handleScore} />
     </>
   );
 }
 
 export default MemoryGame;
 
-function Board({ fetchedImages }) {
+function Board({ fetchedImages, handleScore }) {
   const [images, setImages] = useState(shuffledImages(fetchedImages));
   const [firstClickedCardIndex, setfirstClickedCardIndex] = useState(null);
   const [isTwoCardsRevealed, setIsTwoCardsRevealed] = useState(false);
@@ -49,6 +54,7 @@ function Board({ fetchedImages }) {
         // keep visible => isRevealed: true
         setfirstClickedCardIndex(null);
         setIsTwoCardsRevealed(false);
+        handleScore();
       } else {
         // hide => isRevealed: false for both cards firstClickedCardIndex and index
 
