@@ -25,6 +25,12 @@ function Board({ fetchedImages }) {
       // Two cards are already revealed, don't process any further clicks
       return;
     }
+    // if the clicked image has already been revealed
+    if (images[index].isRevealed === true) {
+      // The card is already revealed, get another valid click
+      console.log("has been revealed");
+      return;
+    }
 
     const updatedImages = images.map((image, id) => {
       return id === index ? { ...image, isRevealed: true } : image;
@@ -42,7 +48,7 @@ function Board({ fetchedImages }) {
       if (images[firstClickedCardIndex].id === images[index].id) {
         // keep visible => isRevealed: true
         setfirstClickedCardIndex(null);
-        setIsTwoCardsRevealed(false); // Reset the flag
+        setIsTwoCardsRevealed(false);
       } else {
         // hide => isRevealed: false for both cards firstClickedCardIndex and index
 
