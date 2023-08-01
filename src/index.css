@@ -18,10 +18,16 @@
   overflow: hidden;
   border-radius: 10px;
   margin: 4px;
+  transform-style: preserve-3d;
 }
 
 .card img {
+  transform: rotateY(0deg);
+  transition: all 0.25s linear;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.card img.isRevealed {
+  transform: rotateY(180deg);
 }
