@@ -33,7 +33,6 @@ function Board({ fetchedImages, handleScore, reset, handleReset }) {
   const [firstClickedCardIndex, setfirstClickedCardIndex] = useState(null);
   const [isTwoCardsRevealed, setIsTwoCardsRevealed] = useState(false);
 
-  // the reset logic is executed AFTER the rendering cycle
   useEffect(() => {
     console.log("board rerendered");
     if (reset) {
@@ -92,7 +91,7 @@ function Board({ fetchedImages, handleScore, reset, handleReset }) {
 
           setImages(updatedImages);
           setIsTwoCardsRevealed(false); // Reset the flag after hiding the unmatched cards
-        }, 1000);
+        }, 500);
       }
     }
   };
@@ -118,7 +117,6 @@ function Card({ image, onClick, index }) {
         onClick={() => onClick(index)}
         src={image.isRevealed ? image.url : backCardUrl}
         alt=""
-        className={image.isRevealed ? "isRevealed" : undefined}
       />
     </div>
   );
